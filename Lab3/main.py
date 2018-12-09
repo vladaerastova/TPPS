@@ -1,10 +1,12 @@
 class City:
     MIN = 1
     MAX = 1000
+    INCORRECT_CITY_SIZE_ERROR_MSG = 'Incorrect city size'
+    INCORRECT_SHOP_LOCATION_ERROR_MSG = 'Incorrect shop location'
 
     def __init__(self, dx, dy):
         if self.MIN > dx or dx > self.MAX or self.MIN > dy or dy > self.MAX:
-            raise Exception('Incorrect city size')
+            raise Exception(self.INCORRECT_CITY_SIZE_ERROR_MSG)
         self.dx = dx
         self.dy = dy
         self.city = [[0 for j in range(dy)] for i in range(dx)]
@@ -14,7 +16,9 @@ class City:
 
     def set_coffee_shop(self, x, y):
         if self.MIN > x or x > self.dx or self.MIN > y or y > self.dy:
-            raise Exception('Incorrect shop location')
+            raise Exception(self.INCORRECT_SHOP_LOCATION_ERROR_MSG)
+        if self.city[x - 1][y - 1] == -1:
+            return
         self.city[x - 1][y - 1] = -1  # mark that the cell is coffee shop
         self.all_shops += 1
 
@@ -120,6 +124,9 @@ class BestLocationCalculator:
 
 
 class Parser:
+    INCORRECT_FORMAT_OF_FILE_ERROR_MSG = 'Incorrect format of the input file'
+    INCORRECT_NUMBER_OF_QUERIES_ERROR_MSG = 'Incorrect number of queries'
+
     def __init__(self):
         self.MIN_N = 0
         self.MAX_N = 105
@@ -132,15 +139,15 @@ class Parser:
             while True:
                 first_line = list(map(int, file.readline().split(' ')))
                 if len(first_line) != 4:
-                    raise Exception('Incorrect format of the input file')
+                    raise Exception(self.INCORRECT_FORMAT_OF_FILE_ERROR_MSG)
                 if first_line == [0] * 4:
                     return self.cases_list
                 calculator = BestLocationCalculator()
                 calculator.set_city(City(first_line[0], first_line[1]))
                 if not (self.MIN_N < first_line[2] < self.MAX_N):
-                    raise Exception('Incorrect number of cofee shops')
+                    raise Exception('Incorrect number of coffee shops')
                 if not (self.MIN_Q < first_line[3] < self.MAX_Q):
-                    raise Exception('Incorrect number of queries')
+                    raise Exception(self.INCORRECT_NUMBER_OF_QUERIES_ERROR_MSG)
 
                 for i in range(first_line[2]):
                     shop_location = list(map(int, file.readline().split(' ')))
@@ -164,7 +171,7 @@ def main():
         case_number = 1
         for calc in cases_list:
             calc.calculate()
-            print('Case namber: {}\n'.format(case_number))
+            print('Case number: {}\n'.format(case_number))
             print(calc.get_result())
             case_number += 1
     except ValueError:
